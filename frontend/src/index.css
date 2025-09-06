@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* demo helper */
+* { outline-color: #60a5fa; }
