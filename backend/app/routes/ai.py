@@ -13,23 +13,16 @@ class CoverLetterReq(BaseModel):
     company: str | None = None
     role: str | None = None
 
-@router.post("/cover-letter")
-def generate_cover_letter(req: CoverLetterReq, db: Session = Depends(get_db), user: models.User = Depends(get_current_user)):
-    company = req.company or "the company"
-    role = req.role or "the role"
-    body = f"""Dear Hiring Manager,
-
-I'm excited to apply for {role} at {company}. With a background in {req.resume_summary}, I can contribute immediately to your team's goals.
-
-Highlights:
-- Track record of shipping production features and improving performance.
-- Strong collaboration and clear communication.
-- Passion for building tools that improve efficiency and user experience.
-
-From the job description, I noted key responsibilities that align with my experience.
-I'd love to discuss how I can add value to {company}.
-
-Best regards,
-{req.your_name}
-"""
-    return {"cover_letter": body}
+@router.get("/test")
+def ai_test():
+    import os
+    from openai import OpenAI
+    key = os.getenv("OPENAI_API_KEY")
+    if not key:
+        return {"ok": False, "error": "OPENAI_API_KEY missing"}
+    try:
+        client = OpenAI(api_key="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")
+        r = client.responses.create(model=os.getenv("OPENAI_MODEL","gpt-4o-mini"), input="ping")
+        return {"ok": True, "sample": (getattr(r, "output_text", "") or "")[:80]}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
