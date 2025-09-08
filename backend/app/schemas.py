@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator, Field
 from typing import Optional, List
 from datetime import date, datetime
 from enum import Enum
@@ -7,12 +7,22 @@ class AppStatus(str, Enum):
     APPLIED = "APPLIED"
     INTERVIEWING = "INTERVIEWING"
     OFFER = "OFFER"
+    ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
     ON_HOLD = "ON_HOLD"
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=6, max_length=128, description="Password must be at least 6 characters")
+    
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Password cannot be empty or only whitespace')
+        if len(v.strip()) < 6:
+            raise ValueError('Password must be at least 6 characters long')
+        return v.strip()
 
 class Token(BaseModel):
     access_token: str
@@ -25,31 +35,71 @@ class UserRead(BaseModel):
         from_attributes = True
 
 class ApplicationBase(BaseModel):
-    company: str
-    role: str
+    company: str = Field(..., min_length=2, max_length=255, description="Company name")
+    role: str = Field(..., min_length=2, max_length=255, description="Job role/position")
+    location: str = Field(..., min_length=2, max_length=255, description="Job location")
     status: Optional[AppStatus] = AppStatus.APPLIED
-    source: Optional[str] = None
-    location: Optional[str] = None
+    source: Optional[str] = Field(None, max_length=255)
     applied_date: Optional[date] = None
     next_action_date: Optional[date] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(None, max_length=5000)
+    
+    @field_validator('company', 'role', 'location')
+    @classmethod
+    def validate_required_fields(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Field cannot be empty or only whitespace')
+        return v.strip()
+    
+    @field_validator('source', 'notes')
+    @classmethod
+    def validate_optional_fields(cls, v):
+        if v is not None and isinstance(v, str):
+            stripped = v.strip()
+            return stripped if stripped else None
+        return v
 
 class ApplicationCreate(ApplicationBase):
     pass
 
 class ApplicationUpdate(BaseModel):
-    company: Optional[str] = None
-    role: Optional[str] = None
+    company: Optional[str] = Field(None, min_length=2, max_length=255)
+    role: Optional[str] = Field(None, min_length=2, max_length=255)
+    location: Optional[str] = Field(None, min_length=2, max_length=255)
     status: Optional[AppStatus] = None
+    source: Optional[str] = Field(None, max_length=255)
+    applied_date: Optional[date] = None
+    next_action_date: Optional[date] = None
+    notes: Optional[str] = Field(None, max_length=5000)
+    
+    @field_validator('company', 'role', 'location')
+    @classmethod
+    def validate_required_fields_update(cls, v):
+        if v is not None:
+            if not v or not v.strip():
+                raise ValueError('Field cannot be empty or only whitespace')
+            return v.strip()
+        return v
+    
+    @field_validator('source', 'notes')
+    @classmethod
+    def validate_optional_fields_update(cls, v):
+        if v is not None and isinstance(v, str):
+            stripped = v.strip()
+            return stripped if stripped else None
+        return v
+
+class ApplicationRead(BaseModel):
+    id: int
+    user_id: int
+    company: str
+    role: str
+    location: str
+    status: AppStatus = AppStatus.APPLIED
     source: Optional[str] = None
-    location: Optional[str] = None
     applied_date: Optional[date] = None
     next_action_date: Optional[date] = None
     notes: Optional[str] = None
-
-class ApplicationRead(ApplicationBase):
-    id: int
-    user_id: int
     created_at: datetime
     updated_at: datetime
     class Config:
