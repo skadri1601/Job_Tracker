@@ -20,8 +20,11 @@ export default function ApplicationCard({ app, onMove }) {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm border border-white/30 rounded-2xl p-4 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transform hover:scale-105 transition-all duration-300 group">
-      <div className="flex items-start justify-between mb-3">
+    <div className="bg-white/90 border border-white/40 rounded-2xl p-4 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-emerald-500/20 transform hover:scale-105 hover:-rotate-1 transition-all duration-500 group relative overflow-hidden">
+      {/* Subtle Background Animation */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      
+      <div className="flex items-start justify-between mb-3 relative z-10">
         <div className="flex-1">
           <div className="font-semibold text-slate-800 text-lg group-hover:text-slate-900 transition-colors">
             {app.company}
@@ -42,14 +45,14 @@ export default function ApplicationCard({ app, onMove }) {
         </div>
       </div>
       
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-1.5 relative z-10">
         {['APPLIED','INTERVIEWING','OFFER','ACCEPTED','REJECTED','ON_HOLD'].map(s=>(
           <button key={s}
             onClick={()=>onMove(app, s)}
-            className={`text-xs rounded-lg px-2.5 py-1.5 font-medium transition-all duration-200 ${
+            className={`text-xs rounded-lg px-2.5 py-1.5 font-medium transition-all duration-300 transform hover:scale-110 hover:-translate-y-0.5 ${
               app.status === s 
-                ? `${statusColors[s]} cursor-default` 
-                : 'text-slate-600 bg-slate-100 border border-slate-200 hover:bg-slate-200 hover:border-slate-300'
+                ? `${statusColors[s]} cursor-default animate-pulse` 
+                : 'text-slate-600 bg-slate-100 border border-slate-200 hover:bg-gradient-to-r hover:from-slate-200 hover:to-slate-300 hover:border-slate-400 hover:text-slate-700 hover:shadow-md'
             }`}
             disabled={app.status === s}
           >

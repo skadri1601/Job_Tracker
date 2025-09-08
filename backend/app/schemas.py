@@ -14,6 +14,8 @@ class AppStatus(str, Enum):
 class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=6, max_length=128, description="Password must be at least 6 characters")
+    first_name: str = Field(..., min_length=2, max_length=50, description="First name")
+    last_name: str = Field(..., min_length=2, max_length=50, description="Last name")
     
     @field_validator('password')
     @classmethod
@@ -24,6 +26,19 @@ class UserCreate(BaseModel):
             raise ValueError('Password must be at least 6 characters long')
         return v.strip()
 
+    @field_validator('first_name', 'last_name')
+    @classmethod
+    def validate_names(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Name cannot be empty or only whitespace')
+        if len(v.strip()) < 2:
+            raise ValueError('Name must be at least 2 characters long')
+        return v.strip()
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -31,6 +46,8 @@ class Token(BaseModel):
 class UserRead(BaseModel):
     id: int
     email: EmailStr
+    first_name: str
+    last_name: str
     class Config:
         from_attributes = True
 

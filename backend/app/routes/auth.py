@@ -14,12 +14,17 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
     hashed = get_password_hash(user.password)
-    u = models.User(email=user.email, hashed_password=hashed)
+    u = models.User(
+        email=user.email, 
+        first_name=user.first_name,
+        last_name=user.last_name,
+        hashed_password=hashed
+    )
     db.add(u); db.commit(); db.refresh(u)
     return u
 
 @router.post("/login", response_model=schemas.Token)
-def login(user: schemas.UserCreate, db: Session = Depends(get_db)):
+def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
     u = db.query(models.User).filter(models.User.email == user.email).first()
     if not u or not verify_password(user.password, u.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")

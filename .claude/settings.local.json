@@ -4,7 +4,10 @@
       "Bash(npm run:*)",
       "Bash(python:*)",
       "Bash(pip install:*)",
-      "Bash(uvicorn:*)"
+      "Bash(uvicorn:*)",
+      "Bash(taskkill:*)",
+      "Bash(del app.db)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
