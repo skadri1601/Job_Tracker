@@ -256,7 +256,36 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="bg-white/60 backdrop-blur-sm border border-white/20 rounded-3xl p-6 mb-8 shadow-xl shadow-blue-500/10">
+      <div className="relative bg-white/70 backdrop-blur-md border border-white/30 rounded-3xl p-6 mb-8 shadow-2xl shadow-blue-500/20 overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Top-left gradient orb */}
+          <div className="absolute -top-8 -left-8 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-cyan-600/20 rounded-full blur-2xl animate-pulse"></div>
+          {/* Top-right gradient orb */}
+          <div className="absolute -top-4 -right-12 w-40 h-40 bg-gradient-to-bl from-emerald-400/15 to-teal-600/15 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          {/* Bottom accent */}
+          <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-64 h-16 bg-gradient-to-r from-transparent via-indigo-400/10 to-transparent rounded-full blur-xl"></div>
+          
+          {/* Subtle Grid Pattern */}
+          <div className="absolute inset-0 opacity-[0.03]">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" className="w-full h-full">
+              <defs>
+                <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
+          
+          {/* Floating accent dots */}
+          <div className="absolute top-4 right-8 w-2 h-2 bg-blue-400/30 rounded-full animate-ping"></div>
+          <div className="absolute top-12 right-20 w-1.5 h-1.5 bg-emerald-400/40 rounded-full animate-ping" style={{animationDelay: '2s'}}></div>
+          <div className="absolute bottom-8 left-12 w-1 h-1 bg-purple-400/50 rounded-full animate-ping" style={{animationDelay: '3s'}}></div>
+        </div>
+        
+        {/* Content with higher z-index */}
+        <div className="relative z-10">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -380,13 +409,51 @@ export default function Dashboard() {
           </div>
         </div>
         {err && <p className="mt-3 text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        </div>
       </div>
 
-      <KanbanBoard apps={apps} onMove={onMove} />
+      {/* Kanban Board with Enhanced Background */}
+      <div className="relative bg-white/50 backdrop-blur-sm border border-white/20 rounded-3xl p-6 mb-8 shadow-xl shadow-emerald-500/10 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Subtle wave pattern */}
+          <div className="absolute inset-0 opacity-[0.05]">
+            <svg className="w-full h-full" viewBox="0 0 1200 120" preserveAspectRatio="none">
+              <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="currentColor"></path>
+              <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="currentColor"></path>
+              <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="currentColor"></path>
+            </svg>
+          </div>
+          
+          {/* Corner accents */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-400/10 to-transparent rounded-bl-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-emerald-400/10 to-transparent rounded-tr-3xl"></div>
+        </div>
+        
+        <div className="relative z-10">
+          <KanbanBoard apps={apps} onMove={onMove} />
+        </div>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mt-8">
-        <EmailIngest onAdded={load} />
-        <CoverLetterGen />
+      {/* Bottom Section with Enhanced Background */}
+      <div className="relative bg-gradient-to-br from-white/60 via-blue-50/40 to-indigo-50/60 backdrop-blur-sm border border-white/30 rounded-3xl p-6 shadow-xl shadow-purple-500/10 overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Geometric shapes */}
+          <div className="absolute top-4 left-8 w-16 h-16 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute bottom-6 right-12 w-20 h-20 bg-gradient-to-tl from-indigo-400/10 to-blue-400/10 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
+          
+          {/* Subtle texture overlay */}
+          <div className="absolute inset-0 opacity-[0.02]" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0)`,
+            backgroundSize: '20px 20px'
+          }}></div>
+        </div>
+        
+        <div className="relative z-10 grid md:grid-cols-2 gap-6">
+          <EmailIngest onAdded={load} />
+          <CoverLetterGen />
+        </div>
       </div>
     </>
   )

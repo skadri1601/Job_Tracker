@@ -51,6 +51,35 @@ class UserRead(BaseModel):
     class Config:
         from_attributes = True
 
+class UserUpdate(BaseModel):
+    first_name: Optional[str] = Field(None, min_length=2, max_length=50)
+    last_name: Optional[str] = Field(None, min_length=2, max_length=50)
+    email: Optional[EmailStr] = None
+    current_password: Optional[str] = None
+    new_password: Optional[str] = Field(None, min_length=6, max_length=128)
+    
+    @field_validator('first_name', 'last_name')
+    @classmethod
+    def validate_names_update(cls, v):
+        if v is not None:
+            if not v or not v.strip():
+                raise ValueError('Name cannot be empty or only whitespace')
+            if len(v.strip()) < 2:
+                raise ValueError('Name must be at least 2 characters long')
+            return v.strip()
+        return v
+    
+    @field_validator('new_password')
+    @classmethod
+    def validate_new_password(cls, v):
+        if v is not None:
+            if not v or not v.strip():
+                raise ValueError('New password cannot be empty or only whitespace')
+            if len(v.strip()) < 6:
+                raise ValueError('New password must be at least 6 characters long')
+            return v.strip()
+        return v
+
 class ApplicationBase(BaseModel):
     company: str = Field(..., min_length=2, max_length=255, description="Company name")
     role: str = Field(..., min_length=2, max_length=255, description="Job role/position")

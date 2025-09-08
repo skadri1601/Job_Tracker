@@ -15,20 +15,30 @@ export default function App() {
       const token = getToken()
       if (token) {
         try {
-          const apps = await api('/applications/') // Test API call to verify token
-          // Extract user info from token payload (JWT decode)  
-          const payload = JSON.parse(atob(token.split('.')[1]))
-          // For now, we'll get user details from the API since token only has email
-          // In a real app, you might include more user info in the JWT payload
-          setUser({ 
-            email: payload.sub,
-            firstName: 'User', // Placeholder until we can get from API
-            lastName: 'Name'   // Placeholder until we can get from API
+          // First, get user details from the API to get actual name
+          const userResponse = await api('/auth/me')
+          setUser({
+            email: userResponse.email,
+            firstName: userResponse.first_name,
+            lastName: userResponse.last_name
           })
         } catch (error) {
-          // Token is invalid, clear auth state
-          setAuth(false)
-          setUser(null)
+          console.error('Error fetching user details:', error)
+          try {
+            // Fallback: Test API call to verify token and extract basic info
+            await api('/applications/')
+            const payload = JSON.parse(atob(token.split('.')[1]))
+            setUser({ 
+              email: payload.sub,
+              firstName: 'User', // Placeholder
+              lastName: 'Name'   // Placeholder
+            })
+          } catch (tokenError) {
+            // Token is invalid, clear auth state
+            clearToken()
+            setAuth(false)
+            setUser(null)
+          }
         }
       }
     }
@@ -37,19 +47,30 @@ export default function App() {
 
   const handleLogin = async () => {
     setAuth(true)
-    // Set user info from token after login
+    // Set user info from API after login
     const token = getToken()
     if (token) {
       try {
-        // Extract user info from token payload (JWT decode)
-        const payload = JSON.parse(atob(token.split('.')[1]))
-        setUser({ 
-          email: payload.sub,
-          firstName: 'User', // Placeholder until we can get from API
-          lastName: 'Name'   // Placeholder until we can get from API
+        // Get actual user details from the API
+        const userResponse = await api('/auth/me')
+        setUser({
+          email: userResponse.email,
+          firstName: userResponse.first_name,
+          lastName: userResponse.last_name
         })
       } catch (error) {
-        console.error('Error decoding token:', error)
+        console.error('Error fetching user details:', error)
+        // Fallback: Extract basic info from token
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]))
+          setUser({ 
+            email: payload.sub,
+            firstName: 'User', // Placeholder
+            lastName: 'Name'   // Placeholder
+          })
+        } catch (tokenError) {
+          console.error('Error decoding token:', tokenError)
+        }
       }
     }
   }
@@ -62,16 +83,39 @@ export default function App() {
   }
 
   const handleProfileSave = async (profileData) => {
-    // For now, just simulate success since we don't have user update endpoint
-    // In a real app, you would call an API endpoint to update user profile
-    setUser({ 
-      ...user, 
-      firstName: profileData.firstName,
-      lastName: profileData.lastName,
-      email: profileData.email 
-    })
-    // TODO: Implement actual profile update API call
-    console.log('Profile update:', profileData)
+    try {
+      // Prepare the update payload
+      const updatePayload = {
+        first_name: profileData.firstName,
+        last_name: profileData.lastName,
+        email: profileData.email
+      }
+      
+      // Add password fields if provided
+      if (profileData.newPassword) {
+        updatePayload.current_password = profileData.currentPassword
+        updatePayload.new_password = profileData.newPassword
+      }
+      
+      // Call the backend API to update profile
+      const updatedUser = await api('/auth/me', {
+        method: 'PATCH',
+        body: JSON.stringify(updatePayload)
+      })
+      
+      // Update the frontend state with the response from backend
+      setUser({
+        email: updatedUser.email,
+        firstName: updatedUser.first_name,
+        lastName: updatedUser.last_name
+      })
+      
+      console.log('Profile updated successfully:', updatedUser)
+    } catch (error) {
+      console.error('Profile update failed:', error)
+      // Re-throw the error so the ProfileEdit component can handle it
+      throw error
+    }
   }
 
   return (

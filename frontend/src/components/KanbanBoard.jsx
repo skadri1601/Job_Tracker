@@ -77,8 +77,8 @@ export default function KanbanBoard({ apps, onMove }) {
             <div className="absolute top-2 left-1/2 w-0.5 h-0.5 bg-white/40 rounded-full animate-ping" style={{animationDelay: '2s'}}></div>
           </div>
 
-          {/* Enhanced Cards Container */}
-          <div className="space-y-3 min-h-[200px]">
+          {/* Enhanced Cards Container with Fixed Height and Scroll */}
+          <div className="space-y-3 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-300 scrollbar-track-gray-100 hover:scrollbar-thumb-blue-400 pr-2">
             {grouped[col].map((app, appIndex) => (
               <div 
                 key={app.id}

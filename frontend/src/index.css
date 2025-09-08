@@ -4,3 +4,197 @@
 
 /* demo helper */
 * { outline-color: #60a5fa; }
+
+/* 3D Cube Animations */
+.cube {
+  position: relative;
+  transform-style: preserve-3d;
+  animation: rotate3d 20s infinite linear;
+}
+
+.cube-small {
+  animation: rotate3d-reverse 15s infinite linear;
+}
+
+.cube-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.cube-front {
+  transform: translateZ(50%);
+}
+
+.cube-back {
+  transform: rotateY(180deg) translateZ(50%);
+}
+
+.cube-right {
+  transform: rotateY(90deg) translateZ(50%);
+}
+
+.cube-left {
+  transform: rotateY(-90deg) translateZ(50%);
+}
+
+.cube-top {
+  transform: rotateX(90deg) translateZ(50%);
+}
+
+.cube-bottom {
+  transform: rotateX(-90deg) translateZ(50%);
+}
+
+/* Keyframe Animations */
+@keyframes rotate3d {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% {
+    transform: rotateX(90deg) rotateY(90deg) rotateZ(0deg);
+  }
+  50% {
+    transform: rotateX(180deg) rotateY(180deg) rotateZ(90deg);
+  }
+  75% {
+    transform: rotateX(270deg) rotateY(270deg) rotateZ(180deg);
+  }
+  100% {
+    transform: rotateX(360deg) rotateY(360deg) rotateZ(270deg);
+  }
+}
+
+@keyframes rotate3d-reverse {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% {
+    transform: rotateX(-90deg) rotateY(-90deg) rotateZ(45deg);
+  }
+  50% {
+    transform: rotateX(-180deg) rotateY(-180deg) rotateZ(90deg);
+  }
+  75% {
+    transform: rotateX(-270deg) rotateY(-270deg) rotateZ(135deg);
+  }
+  100% {
+    transform: rotateX(-360deg) rotateY(-360deg) rotateZ(180deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-20px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+  }
+  75% {
+    transform: translateY(-30px) rotate(270deg);
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  33% {
+    transform: translateY(-25px) rotate(120deg) scale(1.1);
+  }
+  66% {
+    transform: translateY(-15px) rotate(240deg) scale(0.9);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-40px) rotate(180deg);
+  }
+}
+
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom Animation Classes */
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 12s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+.animate-float-slow {
+  animation: float-slow 15s ease-in-out infinite;
+  animation-delay: -4s;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 60s linear infinite;
+}
+
+/* Additional 3D Effects */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Particle and Network Effects */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes network-pulse {
+  0%, 100% {
+    stroke-dasharray: 0, 100;
+    opacity: 0.2;
+  }
+  50% {
+    stroke-dasharray: 50, 100;
+    opacity: 0.6;
+  }
+}
+
+/* Gradient Mesh Animation */
+@keyframes gradient-shift {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.3;
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: rotate(180deg) scale(0.9);
+    opacity: 0.4;
+  }
+  75% {
+    transform: rotate(270deg) scale(1.05);
+    opacity: 0.25;
+  }
+}
