@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import FollowUp from './pages/FollowUp'
+import FollowUpTracking from './pages/FollowUpTracking'
 import ProfileEdit from './components/ProfileEdit'
 import { getToken, api, clearToken } from './api/client'
 
@@ -8,6 +10,11 @@ export default function App() {
   const [auth, setAuth] = useState(!!getToken())
   const [user, setUser] = useState(null)
   const [showProfileEdit, setShowProfileEdit] = useState(false)
+  const [currentPage, setCurrentPage] = useState('dashboard')
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('jobTracker-theme')
+    return saved === 'dark'
+  })
   
   // Verify token validity on app start
   useEffect(() => {
@@ -44,6 +51,20 @@ export default function App() {
     }
     verifyAuth()
   }, [])
+
+  // Theme toggle effect
+  useEffect(() => {
+    localStorage.setItem('jobTracker-theme', isDark ? 'dark' : 'light')
+    if (isDark) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [isDark])
+
+  const toggleTheme = () => {
+    setIsDark(prev => !prev)
+  }
 
   const handleLogin = async () => {
     setAuth(true)
@@ -119,7 +140,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 relative overflow-hidden transition-all duration-500 flex flex-col">
       {/* Animated 3D Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating Geometric Shapes */}
@@ -188,22 +209,103 @@ export default function App() {
           <div className="absolute bottom-0 right-0 w-3/4 h-3/4 bg-gradient-to-tl from-indigo-500/10 via-transparent to-purple-500/10 transform -rotate-12"></div>
         </div>
       </div>
-      <header className="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-white/20 shadow-sm z-[10000]">
+      <header className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-white/20 dark:border-gray-700/50 shadow-sm z-[10000] transition-all duration-300">
         <div className="mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-                </svg>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                  </svg>
+                </div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  Job Tracker
+                </h1>
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                Job Tracker
-              </h1>
+              
+              {/* Navigation - Only show when authenticated */}
+              {auth && (
+                <nav className="hidden md:flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage('dashboard')}
+                    className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                      currentPage === 'dashboard'
+                        ? 'bg-blue-500 text-white shadow-lg'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400'
+                    }`}
+                  >
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage('followup')}
+                    className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                      currentPage === 'followup'
+                        ? 'bg-blue-500 text-white shadow-lg'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400'
+                    }`}
+                  >
+                    Follow-up
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage('tracking')}
+                    className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
+                      currentPage === 'tracking'
+                        ? 'bg-blue-500 text-white shadow-lg'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400'
+                    }`}
+                  >
+                    Tracking
+                  </button>
+                </nav>
+              )}
             </div>
             
-            {/* Profile Section - Only show when authenticated */}
-            {auth && user && (
+            <div className="flex items-center gap-3">
+              {/* Enhanced Theme Toggle Widget */}
+              <div className="relative group z-50">
+                <button
+                  onClick={toggleTheme}
+                  className="relative px-4 py-2 rounded-2xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-yellow-500/20 transform hover:scale-105 transition-all duration-300 group shadow-md"
+                  title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Icon Container */}
+                    <div className="relative w-6 h-6 overflow-hidden">
+                      {/* Sun Icon */}
+                      <div className={`absolute inset-0 transform transition-all duration-500 ${
+                        isDark ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'
+                      }`}>
+                        <svg className="w-6 h-6 text-yellow-500 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+                        </svg>
+                      </div>
+                      {/* Moon Icon */}
+                      <div className={`absolute inset-0 transform transition-all duration-500 ${
+                        isDark ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-0 opacity-0'
+                      }`}>
+                        <svg className="w-6 h-6 text-blue-300 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                          <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    </div>
+                    
+                    {/* Text Label */}
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors duration-300">
+                      {isDark ? 'Light' : 'Dark'}
+                    </span>
+                  </div>
+                  
+                  {/* Hover tooltip */}
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                    Switch to {isDark ? 'light' : 'dark'} mode
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-100"></div>
+                  </div>
+                </button>
+              </div>
+              
+              {/* Profile Section - Only show when authenticated */}
+              {auth && user && (
               <div className="relative group z-[9999]">
                 <button className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-white/70 via-white/60 to-white/70 border border-white/40 hover:from-white/90 hover:via-white/80 hover:to-white/90 hover:shadow-xl hover:shadow-emerald-500/20 transform hover:scale-105 transition-all duration-300 backdrop-blur-sm">
                   <div className="relative">
@@ -288,14 +390,54 @@ export default function App() {
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+              )}
+            </div>
         </div>
+      </div>
       </header>
 
-      <main className="mx-auto px-4 py-8">
-        {!auth ? <Login onLoggedIn={handleLogin} /> : <Dashboard />}
+      <main className="mx-auto px-4 py-8 flex-grow">
+        {!auth ? (
+          <Login onLoggedIn={handleLogin} />
+        ) : (
+          <>
+            {currentPage === 'dashboard' && <Dashboard />}
+            {currentPage === 'followup' && <FollowUp />}
+            {currentPage === 'tracking' && <FollowUpTracking />}
+          </>
+        )}
       </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border-t border-white/20 dark:border-gray-700/50 mt-auto">
+        <div className="mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5 2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />
+              </svg>
+              <span className="text-sm">
+                Made with love by <span className="font-semibold text-blue-600 dark:text-blue-400">Saad</span>
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-6 text-xs text-slate-500 dark:text-slate-500">
+              <span>© {new Date().getFullYear()} Job Tracker. All rights reserved.</span>
+              <div className="flex items-center gap-4">
+                <span>Privacy</span>
+                <span>Terms</span>
+                <span>Support</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+            <p className="text-xs text-slate-400 dark:text-slate-500 text-center">
+              Built with React, FastAPI, and modern web technologies to help you track your job applications efficiently.
+            </p>
+          </div>
+        </div>
+      </footer>
 
       {/* Profile Edit Modal */}
       {showProfileEdit && user && (

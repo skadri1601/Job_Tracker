@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark Mode Setup */
+:root {
+  --bg-primary: theme('colors.white');
+  --bg-secondary: theme('colors.gray.50');
+  --text-primary: theme('colors.gray.900');
+  --text-secondary: theme('colors.gray.600');
+  --border-primary: theme('colors.gray.200');
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --bg-primary: theme('colors.gray.900');
+  --bg-secondary: theme('colors.gray.800');
+  --text-primary: theme('colors.gray.100');
+  --text-secondary: theme('colors.gray.400');
+  --border-primary: theme('colors.gray.700');
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode base styles */
+.dark body {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  color: var(--text-primary);
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
 /* demo helper */
 * { outline-color: #60a5fa; }
 

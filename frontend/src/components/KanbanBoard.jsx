@@ -36,7 +36,7 @@ const ANIMATIONS = {
   ON_HOLD: 'animate-pulse'
 }
 
-export default function KanbanBoard({ apps, onMove }) {
+export default function KanbanBoard({ apps, onMove, onEdit, onDelete }) {
   const cols = ['APPLIED','INTERVIEWING','OFFER','ACCEPTED','REJECTED','ON_HOLD']
   const grouped = Object.fromEntries(cols.map(c=>[c, []]))
   apps.forEach(a => grouped[a.status]?.push(a))
@@ -87,7 +87,7 @@ export default function KanbanBoard({ apps, onMove }) {
                   animationDelay: `${(index * 0.1) + (appIndex * 0.05)}s`
                 }}
               >
-                <ApplicationCard app={app} onMove={onMove} />
+                <ApplicationCard app={app} onMove={onMove} onEdit={onEdit} onDelete={onDelete} />
               </div>
             ))}
             

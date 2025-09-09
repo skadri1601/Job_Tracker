@@ -3,6 +3,8 @@ import { api } from '../api/client'
 import KanbanBoard from '../components/KanbanBoard'
 import CoverLetterGen from '../components/CoverLetterGen'
 import EmailIngest from '../components/EmailIngest'
+import ApplicationEditModal from '../components/ApplicationEditModal'
+import ReminderNotifications from '../components/ReminderNotifications'
 
 const TECH_ROLES = [
   'Software Engineer',
@@ -190,6 +192,8 @@ export default function Dashboard() {
   const [customLocation, setCustomLocation] = useState('')
   const [isCustomLocation, setIsCustomLocation] = useState(false)
   const [err, setErr] = useState(null)
+  const [editingApp, setEditingApp] = useState(null)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   async function load() {
     try { setApps(await api('/applications/')) } catch (e) { setErr(e.message) }
@@ -241,7 +245,7 @@ export default function Dashboard() {
         body: JSON.stringify({ 
           company: trimmedCompany, 
           role: finalRole, 
-          location: finalLocation 
+          location: finalLocation
         }) 
       })
       setCompany(''); setRole(''); setCustomRole(''); setIsCustomRole(false); setLocation(''); setCustomLocation(''); setIsCustomLocation(false); load()
@@ -254,8 +258,45 @@ export default function Dashboard() {
     load()
   }
 
+  function onEdit(app) {
+    setEditingApp(app)
+    setShowEditModal(true)
+  }
+
+  async function onDelete(app) {
+    const confirmed = window.confirm(`Are you sure you want to delete the application for ${app.role} at ${app.company}?`)
+    if (confirmed) {
+      try {
+        await api(`/applications/${app.id}`, { method: 'DELETE' })
+        load()
+      } catch (error) {
+        alert(`Error deleting application: ${error.message}`)
+      }
+    }
+  }
+
+  async function handleEditSave(updatedData) {
+    try {
+      await api(`/applications/${editingApp.id}`, { 
+        method: 'PATCH', 
+        body: JSON.stringify(updatedData) 
+      })
+      load()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  function handleEditClose() {
+    setShowEditModal(false)
+    setEditingApp(null)
+  }
+
   return (
     <>
+      {/* Smart Reminders */}
+      <ReminderNotifications apps={apps} />
+
       <div className="relative bg-white/70 backdrop-blur-md border border-white/30 rounded-3xl p-6 mb-8 shadow-2xl shadow-blue-500/20 overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -300,7 +341,7 @@ export default function Dashboard() {
           {/* Company Field */}
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Company Name</label>
               <input 
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 placeholder-gray-400" 
                 placeholder="Enter company name *" 
@@ -318,9 +359,9 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Role Field */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-slate-700">Job Role</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Job Role</label>
               <select 
-                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white"
+                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white text-gray-900"
                 value={isCustomRole ? 'custom' : role}
                 onChange={(e) => {
                   if (e.target.value === 'custom') {
@@ -357,9 +398,9 @@ export default function Dashboard() {
 
             {/* Location Field */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-slate-700">Location</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Location</label>
               <select 
-                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white"
+                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white text-gray-900"
                 value={isCustomLocation ? 'custom' : location}
                 onChange={(e) => {
                   if (e.target.value === 'custom') {
@@ -394,6 +435,7 @@ export default function Dashboard() {
               )}
             </div>
           </div>
+
 
           {/* Submit Button */}
           <div className="flex justify-center pt-4">
@@ -431,7 +473,7 @@ export default function Dashboard() {
         </div>
         
         <div className="relative z-10">
-          <KanbanBoard apps={apps} onMove={onMove} />
+          <KanbanBoard apps={apps} onMove={onMove} onEdit={onEdit} onDelete={onDelete} />
         </div>
       </div>
 
@@ -455,6 +497,14 @@ export default function Dashboard() {
           <CoverLetterGen />
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <ApplicationEditModal
+        app={editingApp}
+        isOpen={showEditModal}
+        onClose={handleEditClose}
+        onSave={handleEditSave}
+      />
     </>
   )
 }

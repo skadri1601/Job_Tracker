@@ -46,6 +46,10 @@ class Application(Base):
     source = Column(String(255), nullable=True)  # e.g., LinkedIn, Company site
     applied_date = Column(Date, nullable=True)
     next_action_date = Column(Date, nullable=True)
+    last_contact_date = Column(Date, nullable=True)
+    follow_up_date = Column(Date, nullable=True)
+    follow_up_sent = Column(Integer, default=0)  # Number of follow-ups sent
+    reminder_enabled = Column(Integer, default=1)  # 1 for enabled, 0 for disabled
     notes = Column(Text, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)

@@ -88,6 +88,10 @@ class ApplicationBase(BaseModel):
     source: Optional[str] = Field(None, max_length=255)
     applied_date: Optional[date] = None
     next_action_date: Optional[date] = None
+    last_contact_date: Optional[date] = None
+    follow_up_date: Optional[date] = None
+    follow_up_sent: Optional[int] = 0
+    reminder_enabled: Optional[bool] = True
     notes: Optional[str] = Field(None, max_length=5000)
     
     @field_validator('company', 'role', 'location')
@@ -116,6 +120,10 @@ class ApplicationUpdate(BaseModel):
     source: Optional[str] = Field(None, max_length=255)
     applied_date: Optional[date] = None
     next_action_date: Optional[date] = None
+    last_contact_date: Optional[date] = None
+    follow_up_date: Optional[date] = None
+    follow_up_sent: Optional[int] = None
+    reminder_enabled: Optional[bool] = None
     notes: Optional[str] = Field(None, max_length=5000)
     
     @field_validator('company', 'role', 'location')
