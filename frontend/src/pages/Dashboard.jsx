@@ -1,3 +1,10 @@
+/**
+ * DASHBOARD PAGE COMPONENT
+ * =======================
+ * Main dashboard for job application management
+ * Features: Add applications, Kanban board, email ingest, cover letter generation
+ */
+
 import React, { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import KanbanBoard from '../components/KanbanBoard'
@@ -6,6 +13,11 @@ import EmailIngest from '../components/EmailIngest'
 import ApplicationEditModal from '../components/ApplicationEditModal'
 import ReminderNotifications from '../components/ReminderNotifications'
 
+// ======================
+// PREDEFINED OPTIONS
+// ======================
+
+// Comprehensive list of tech roles for dropdown selection
 const TECH_ROLES = [
   'Software Engineer',
   'Senior Software Engineer',
@@ -129,6 +141,7 @@ const TECH_ROLES = [
   'Senior Software Engineer II'
 ]
 
+// Common job locations including remote and major US cities
 const COMMON_LOCATIONS = [
   'Remote (USA)',
   'New York, NY',
@@ -183,23 +196,44 @@ const COMMON_LOCATIONS = [
 ]
 
 export default function Dashboard() {
+  // ======================
+  // STATE MANAGEMENT
+  // ======================
+  
+  // Job applications data from backend
   const [apps, setApps] = useState([])
-  const [company, setCompany] = useState('')
-  const [role, setRole] = useState('')
-  const [customRole, setCustomRole] = useState('')
-  const [isCustomRole, setIsCustomRole] = useState(false)
-  const [location, setLocation] = useState('')
-  const [customLocation, setCustomLocation] = useState('')
-  const [isCustomLocation, setIsCustomLocation] = useState(false)
-  const [err, setErr] = useState(null)
-  const [editingApp, setEditingApp] = useState(null)
-  const [showEditModal, setShowEditModal] = useState(false)
+  
+  // Form fields for adding new applications
+  const [company, setCompany] = useState('')           // Company name input
+  const [role, setRole] = useState('')                 // Selected predefined role
+  const [customRole, setCustomRole] = useState('')     // Custom role input
+  const [isCustomRole, setIsCustomRole] = useState(false) // Toggle for custom role
+  const [location, setLocation] = useState('')         // Selected predefined location
+  const [customLocation, setCustomLocation] = useState('') // Custom location input
+  const [isCustomLocation, setIsCustomLocation] = useState(false) // Toggle for custom location
+  
+  // Error handling and modal state
+  const [err, setErr] = useState(null)                 // Form submission errors
+  const [editingApp, setEditingApp] = useState(null)   // Application being edited
+  const [showEditModal, setShowEditModal] = useState(false) // Edit modal visibility
 
+  // ======================
+  // DATA LOADING
+  // ======================
+  
+  // Load all job applications from backend
   async function load() {
     try { setApps(await api('/applications/')) } catch (e) { setErr(e.message) }
   }
+  
+  // Load applications on component mount
   useEffect(()=>{ load() }, [])
 
+  // ======================
+  // APPLICATION MANAGEMENT
+  // ======================
+  
+  // Add new job application with form validation
   async function addApp(e) {
     e.preventDefault()
     setErr(null)
@@ -341,7 +375,7 @@ export default function Dashboard() {
           {/* Company Field */}
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Company Name</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
               <input 
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 placeholder-gray-400" 
                 placeholder="Enter company name *" 
@@ -359,7 +393,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Role Field */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Job Role</label>
+              <label className="block text-sm font-medium text-slate-700">Job Role</label>
               <select 
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white text-gray-900"
                 value={isCustomRole ? 'custom' : role}
@@ -398,7 +432,7 @@ export default function Dashboard() {
 
             {/* Location Field */}
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Location</label>
+              <label className="block text-sm font-medium text-slate-700">Location</label>
               <select 
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white text-gray-900"
                 value={isCustomLocation ? 'custom' : location}

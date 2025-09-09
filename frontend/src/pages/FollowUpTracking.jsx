@@ -1,15 +1,34 @@
+/**
+ * FOLLOW-UP TRACKING PAGE COMPONENT
+ * ================================
+ * Advanced tracking dashboard for managing job application follow-ups
+ * Features: Smart filtering, urgency indicators, follow-up analytics
+ */
+
 import React, { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import ReminderNotifications from '../components/ReminderNotifications'
 
 export default function FollowUpTracking() {
-  const [apps, setApps] = useState([])
-  const [filteredApps, setFilteredApps] = useState([])
-  const [err, setErr] = useState(null)
-  const [sortBy, setSortBy] = useState('follow_up_date')
-  const [filterBy, setFilterBy] = useState('all')
-  const [searchTerm, setSearchTerm] = useState('')
+  // ======================
+  // STATE MANAGEMENT
+  // ======================
+  
+  // Application data and filtering
+  const [apps, setApps] = useState([])                    // All applications from backend
+  const [filteredApps, setFilteredApps] = useState([])    // Filtered and sorted applications
+  const [err, setErr] = useState(null)                    // Error handling
+  
+  // Filtering and sorting options
+  const [sortBy, setSortBy] = useState('follow_up_date')  // Current sort criteria
+  const [filterBy, setFilterBy] = useState('all')         // Current filter criteria
+  const [searchTerm, setSearchTerm] = useState('')        // Search input for company/role
 
+  // ======================
+  // DATA LOADING
+  // ======================
+  
+  // Load all applications from backend API
   async function load() {
     try { 
       const data = await api('/applications/')
@@ -19,8 +38,14 @@ export default function FollowUpTracking() {
     }
   }
 
+  // Load data on component mount
   useEffect(() => { load() }, [])
 
+  // ======================
+  // FILTERING & SORTING LOGIC
+  // ======================
+  
+  // Apply search, filter, and sort logic whenever data or filters change
   useEffect(() => {
     let filtered = [...apps]
 

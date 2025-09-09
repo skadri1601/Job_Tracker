@@ -2,34 +2,117 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Dark Mode Setup */
-:root {
-  --bg-primary: theme('colors.white');
-  --bg-secondary: theme('colors.gray.50');
-  --text-primary: theme('colors.gray.900');
-  --text-secondary: theme('colors.gray.600');
-  --border-primary: theme('colors.gray.200');
-  --shadow-color: rgba(0, 0, 0, 0.1);
+/* Clean, single-theme design - Light mode only */
+body {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+  color: #1e293b;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
-.dark {
-  --bg-primary: theme('colors.gray.900');
-  --bg-secondary: theme('colors.gray.800');
-  --text-primary: theme('colors.gray.100');
-  --text-secondary: theme('colors.gray.400');
-  --border-primary: theme('colors.gray.700');
-  --shadow-color: rgba(0, 0, 0, 0.3);
+/* Ensure consistent text visibility */
+body *, p, span, div, h1, h2, h3, h4, h5, h6 {
+  color: #1e293b;
 }
 
-/* Dark mode base styles */
-.dark body {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  color: var(--text-primary);
+/* Form elements - clean and consistent */
+input, select, textarea {
+  color: #1e293b;
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
 }
 
-/* Smooth transitions for theme changes */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+input:focus, select:focus, textarea:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button styling */
+button {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+/* Typography Standards - Consistent text styling across app */
+/* Page Headers */
+.page-header {
+  font-weight: 700; /* font-bold */
+  color: #1e293b; /* text-slate-800 */
+}
+
+/* Section Headers */
+.section-header {
+  font-weight: 600; /* font-semibold */
+  color: #1e293b; /* text-slate-800 */
+}
+
+/* Component Titles */
+.component-title {
+  font-weight: 600; /* font-semibold */
+  color: #1e293b; /* text-slate-800 */
+}
+
+/* Form Labels */
+.form-label {
+  font-weight: 500; /* font-medium */
+  color: #374151; /* text-slate-700 */
+}
+
+/* Button Text */
+.button-text {
+  font-weight: 600; /* font-semibold */
+}
+
+/* Navigation Items */
+.nav-item {
+  font-weight: 500; /* font-medium */
+}
+
+/* Body Text */
+.body-text {
+  font-weight: 400; /* font-normal */
+  color: #475569; /* text-slate-600 */
+}
+
+/* Status Text */
+.status-text {
+  font-weight: 500; /* font-medium */
+}
+
+/* Input Text */
+.input-text {
+  color: #111827; /* text-gray-900 */
+}
+
+/* Status badges - clean and readable */
+.bg-blue-100.text-blue-800 {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.bg-yellow-100.text-yellow-800 {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.bg-green-100.text-green-800 {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.bg-emerald-100.text-emerald-800 {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.bg-red-100.text-red-800 {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.bg-gray-100.text-gray-800 {
+  background-color: #f3f4f6;
+  color: #1f2937;
 }
 
 /* demo helper */
