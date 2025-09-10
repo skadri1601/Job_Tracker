@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { api, setToken } from '../api/client'
 
 export default function Login({ onLoggedIn }) {
-  const [email, setEmail] = useState('test@example.com')
-  const [password, setPassword] = useState('password')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -67,7 +67,9 @@ export default function Login({ onLoggedIn }) {
     }
     
     try {
+      console.log('Login attempt:', { email: email.trim(), mode });
       if (mode === 'register') {
+        console.log('Registering user...');
         await api('/auth/register', { 
           method: 'POST', 
           body: JSON.stringify({ 
@@ -77,23 +79,29 @@ export default function Login({ onLoggedIn }) {
             last_name: lastName.trim()
           }) 
         })
+        console.log('Registration successful');
       }
+      console.log('Attempting login...');
       const { access_token } = await api('/auth/login', { method: 'POST', body: JSON.stringify({ email: email.trim(), password }) })
+      console.log('Login successful, token received');
       setToken(access_token)
       onLoggedIn()
-    } catch (e) { setErr(e.message) }
+    } catch (e) { 
+      console.error('Login error:', e);
+      setErr(e.message) 
+    }
   }
 
   return (
     <div className={`mx-auto ${mode === 'register' ? 'max-w-lg' : 'max-w-md'}`}>
-      <div className="bg-white/60 backdrop-blur-sm border border-white/20 rounded-3xl p-8 shadow-2xl shadow-blue-500/20">
+      <div className="card-3d p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
             {title}
           </h2>
         </div>
@@ -103,12 +111,12 @@ export default function Login({ onLoggedIn }) {
           {mode === 'register' && (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   First Name <span className="text-red-500">*</span>
                 </label>
                 <input 
                   type="text"
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 placeholder-gray-400" 
+                  className="w-full rounded-xl border-2 border-white/30 bg-white/90 text-gray-800 px-4 py-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 backdrop-blur-sm transition-all duration-300 placeholder-gray-500 shadow-sm" 
                   placeholder="e.g., John"
                   value={firstName} 
                   onChange={e=>setFirstName(e.target.value)}
@@ -118,12 +126,12 @@ export default function Login({ onLoggedIn }) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Last Name <span className="text-red-500">*</span>
                 </label>
                 <input 
                   type="text"
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 placeholder-gray-400" 
+                  className="w-full rounded-xl border-2 border-white/30 bg-white/90 text-gray-800 px-4 py-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 backdrop-blur-sm transition-all duration-300 placeholder-gray-500 shadow-sm" 
                   placeholder="e.g., Doe"
                   value={lastName} 
                   onChange={e=>setLastName(e.target.value)}
@@ -136,12 +144,12 @@ export default function Login({ onLoggedIn }) {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Email Address <span className="text-red-500">*</span>
             </label>
             <input 
               type="email"
-              className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 placeholder-gray-400" 
+              className="w-full rounded-xl border-2 border-white/30 bg-white/90 text-gray-800 px-4 py-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 backdrop-blur-sm transition-all duration-300 placeholder-gray-500 shadow-sm" 
               placeholder="e.g., john.doe@example.com"
               value={email} 
               onChange={e=>setEmail(e.target.value)} 
@@ -150,12 +158,12 @@ export default function Login({ onLoggedIn }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Password <span className="text-red-500">*</span>
             </label>
             <input 
               type="password" 
-              className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 placeholder-gray-400" 
+              className="w-full rounded-xl border-2 border-white/30 bg-white/90 text-gray-800 px-4 py-3 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 backdrop-blur-sm transition-all duration-300 placeholder-gray-500 shadow-sm" 
               placeholder={mode === 'register' ? "Create a strong password" : "Enter your password"}
               value={password} 
               onChange={e=>handlePasswordChange(e.target.value)} 
@@ -165,8 +173,8 @@ export default function Login({ onLoggedIn }) {
             
             {/* Password Requirements - Only show during registration */}
             {mode === 'register' && (
-              <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                <p className="text-xs font-medium text-blue-800 mb-2">Password Requirements:</p>
+              <div className="mt-3 p-3 bg-white/60 rounded-lg border border-white/40 backdrop-blur-sm">
+                <p className="text-xs font-medium text-gray-700 mb-2">Password Requirements:</p>
                 <ul className="text-xs space-y-1">
                   {[
                     { text: 'At least 8 characters long', test: (pwd) => pwd.length >= 8 },
@@ -194,15 +202,15 @@ export default function Login({ onLoggedIn }) {
           {/* Confirm Password - Only show during registration */}
           {mode === 'register' && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Confirm Password <span className="text-red-500">*</span>
               </label>
               <input 
                 type="password" 
-                className={`w-full rounded-xl border-2 px-4 py-3 focus:ring-2 transition-all duration-200 placeholder-gray-400 ${
+                className={`w-full rounded-xl border-2 px-4 py-3 focus:ring-2 transition-all duration-300 placeholder-gray-500 bg-white/90 text-gray-800 backdrop-blur-sm shadow-sm ${
                   confirmPassword && password !== confirmPassword 
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                    : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'
+                    ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' 
+                    : 'border-white/30 focus:border-purple-500 focus:ring-purple-500/20'
                 }`}
                 placeholder="Re-enter your password"
                 value={confirmPassword} 
@@ -222,7 +230,7 @@ export default function Login({ onLoggedIn }) {
             </div>
           )}
           <button 
-            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 font-semibold shadow-lg shadow-blue-500/25" 
+            className="w-full btn-primary transform hover:scale-105" 
             type="submit"
           >
             {mode === 'login' ? 'Sign In' : 'Create Account'}
@@ -231,7 +239,7 @@ export default function Login({ onLoggedIn }) {
         
         <div className="mt-6 text-center">
           <button 
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors duration-200" 
+            className="text-purple-600 hover:text-purple-700 text-sm font-medium transition-colors duration-200 interactive" 
             onClick={()=>setMode(mode==='login'?'register':'login')}
           >
             {mode==='login' ? 'Need an account? Register here' : 'Already have an account? Sign in'}
@@ -239,8 +247,8 @@ export default function Login({ onLoggedIn }) {
         </div>
         
         {err && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl">
-            <p className="text-sm text-red-600">{err}</p>
+          <div className="mt-4 p-3 bg-red-100/80 border border-red-300/50 rounded-xl backdrop-blur-sm">
+            <p className="text-sm text-red-700">{err}</p>
           </div>
         )}
       </div>

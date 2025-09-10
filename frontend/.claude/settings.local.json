@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Saad/Code_App/Job_Tracker/**)",
+      "Bash(source:*)",
+      "Bash(uvicorn:*)",
+      "Bash(npm run dev:*)",
+      "Bash(python:*)",
+      "Bash(.venv/Scripts/activate)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(curl:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
